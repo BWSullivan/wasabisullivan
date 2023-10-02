@@ -6,4 +6,4 @@ phases:
       - echo "Copying files to S3..."
   post_build:
     commands:
-      - aws s3 cp . s3://wasabibucket/ --recursive --exclude "*.git*"
+      - aws s3 cp . s3://wasabibucket2/ --recursive --exclude "*.git*"
