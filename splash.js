@@ -16,11 +16,22 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fade out black overlay and show locations
             setTimeout(() => {
                 blackOverlay.style.opacity = '0';
+
+                // Show locations div but keep it invisible
                 locations.style.display = 'block';
+
+                // Fade in locations after a short delay to ensure it's part of the layout
+                setTimeout(() => {
+                    locations.style.opacity = '1';
+                }, 50); // Short delay
+
                 document.body.style.overflow = 'auto'; // Allow scrolling
-            }, 2000); // Wait 2 seconds
 
-        }, 2000); // Wait 2 seconds
+                // Remove splashScreen from the layout
+                splashScreen.style.display = 'none';
+            }, 1000); // Wait 1 seconds
 
-    }, 2000); // Show splash screen for 2 seconds
+        }, 1000); // Wait 1 seconds
+
+    }, 1000); // Show splash screen for 1 seconds
 });
