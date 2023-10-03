@@ -1,0 +1,104 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 12ch;
+    }
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+.cursor {
+    display: inline-block;
+    animation: blink 1s 5s;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    overflow: hidden; /* Prevent scrolling during splash and overlay */
+}
+
+.splash {
+    border-right: 2px solid white;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 12ch;
+    animation: typing 1s steps(12), blink 0.5s step-end infinite;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    color: white;
+    z-index: 3; /* Ensure it's above other elements */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0;
+    z-index: 2; /* Below splash screen but above locations list */
+}
+
+.locations {
+    display: none; /* Initially hidden */
+    padding: 20px;
+    z-index: 4; /* Ensure it's above other elements */
+    opacity: 0;
+    transition: opacity 2s; /* Adjust the duration as needed */
+}
+
+.locations ul {
+    list-style-type: none; /* Removes the bullet points */
+    padding: 0; /* Removes default padding */
+    font-size: 30px;
+}
+
+.locations li {
+    margin-bottom: 10px; /* Adds some space between list items */
+}
+
+.locations a {
+    text-decoration: none; /* Removes the underline from links */
+    color: white; /* Sets the link color */
+    transition: color 0.3s; /* Smooth color transition for hover effect */
+}
+
+.locations a:hover {
+    color: #007BFF; /* Changes the link color on hover */
+}
+
+
+
+
+
+
+
