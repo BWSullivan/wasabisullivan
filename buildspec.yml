@@ -1,9 +1,0 @@
-version: 0.2
-
-phases:
-  build:
-    commands:
-      - echo "Copying files to S3..."
-  post_build:
-    commands:
-      - aws s3 cp . s3://wasabisullivan.com/ --recursive --exclude "*.git*"
