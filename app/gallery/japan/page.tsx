@@ -11,9 +11,10 @@ import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 type CloudinaryImage = {
   src: string;
   alt: string;
+  thumbnail: string;
 };
 
-const Japan = () => {
+const Japan: React.FC = () => {
   const [images, setImages] = useState<CloudinaryImage[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -44,13 +45,13 @@ const Japan = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {images.map((image, index) => (
           <div key={index} style={{ margin: '1rem' }} onClick={() => { setIsOpen(true); setPhotoIndex(index); }}>
-            <CldImage
-              width="400"
-              height="300"
-              src={image.src}
-              crop="fill"
-              sizes="100vw"
+            <img
+              src={image.thumbnail}
               alt={image.alt}
+              width="200"
+              height="150"
+              loading="lazy"
+              style={{ cursor: 'pointer' }}
             />
           </div>
         ))}
