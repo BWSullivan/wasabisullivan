@@ -9,9 +9,9 @@ const Gallery = () => {
   return (
     <div>
         <nav className="my-16">
-        <ul className="flex items-center justify-center gap-6">
+        <ul className="flex items-center justify-center gap-5">
           {navigator.map((item) => (
-            <Link
+            <Link 
             key={item.href}
             href={item.href}
             className="text-sm duration-500 text-white hover:text-zinc-300">
