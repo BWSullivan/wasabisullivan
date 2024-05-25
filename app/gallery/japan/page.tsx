@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { CldImage } from 'next-cloudinary';
+import Image from 'next/image'
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -44,14 +44,15 @@ const Japan: React.FC = () => {
       </h2>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {images.map((image, index) => (
-          <div key={index} style={{ margin: '1rem' }} onClick={() => { setIsOpen(true); setPhotoIndex(index); }}>
-            <img
+          <div key={index} style={{ margin: '1rem'}} onClick={() => { setIsOpen(true); setPhotoIndex(index); }}>
+            <Image
               src={image.thumbnail}
               alt={image.alt}
-              width="200"
-              height="150"
+              width="400" // size of display
+              height="300"
               loading="lazy"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', borderRadius: '10px' }}
+              
             />
           </div>
         ))}

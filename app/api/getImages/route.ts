@@ -34,13 +34,13 @@ export async function GET() {
     // console.log('Fetched Resources:', resources);
 
     const images: CloudinaryImage[] = resources
-      .filter((resource: any) => resource.bytes > 0) // Filter out images with 0 bytes
+      .filter((resource: any) => resource.bytes > 0) // Filter out images with 0 bytes (super mega headache)
       .map((resource: any) => ({
         src: resource.public_id,
         alt: resource.public_id.split('/').pop(), 
         thumbnail: cloudinary.url(resource.public_id, {
-          width: 200,
-          height: 150,
+          width: 400, // rendered resolution for thumbnails
+          height: 300,
           crop: 'fill',
         }),
       }));
