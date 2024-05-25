@@ -9,6 +9,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Log environment variables for debugging (remove this in production)
+console.log('Cloudinary Config:', {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 type CloudinaryImage = {
   src: string;
   alt: string;
@@ -24,7 +31,7 @@ export async function GET() {
     });
 
     // Log the resources to debug
-    console.log('Fetched Resources:', resources);
+    // console.log('Fetched Resources:', resources);
 
     const images: CloudinaryImage[] = resources
       .filter((resource: any) => resource.bytes > 0) // Filter out images with 0 bytes
