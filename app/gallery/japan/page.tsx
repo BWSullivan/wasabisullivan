@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { CldImage } from 'next-cloudinary';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import Download from "yet-another-react-lightbox/plugins/download";
-import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import Download from 'yet-another-react-lightbox/plugins/download';
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 
 type CloudinaryImage = {
   src: string;
@@ -23,7 +23,11 @@ const Japan = () => {
       try {
         const response = await fetch('/api/getImages');
         const data = await response.json();
-        setImages(data);
+        if (response.ok) {
+          setImages(data);
+        } else {
+          console.error('Error fetching images:', data.error);
+        }
       } catch (error) {
         console.error('Error fetching images:', error);
       }
@@ -34,12 +38,12 @@ const Japan = () => {
 
   return (
     <div style={{ textAlign: 'center' }}>
-        <h2 className="text-med text-zinc-500 ">
-          Full resolution images, free for personal use.
-        </h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap' , justifyContent: 'center'}}>
+      <h2 className="text-med text-zinc-500">
+        Full resolution images, free for personal use.
+      </h2>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {images.map((image, index) => (
-          <div key={index} style={{ margin: '10px' }} onClick={() => { setIsOpen(true); setPhotoIndex(index); }}>
+          <div key={index} style={{ margin: '1rem' }} onClick={() => { setIsOpen(true); setPhotoIndex(index); }}>
             <CldImage
               width="400"
               height="300"
@@ -55,10 +59,9 @@ const Japan = () => {
       {isOpen && (
         <Lightbox
           plugins={[Zoom, Fullscreen, Download]}
-          
           open={isOpen}
           close={() => setIsOpen(false)}
-          slides={images.map(image => ({ src: `https://res.cloudinary.com/da74xkmid/image/upload/v1714852545/${image.src}`, alt: image.alt }))}
+          slides={images.map(image => ({ src: `https://res.cloudinary.com/da74xkmid/image/upload/${image.src}`, alt: image.alt }))}
           index={photoIndex}
         />
       )}

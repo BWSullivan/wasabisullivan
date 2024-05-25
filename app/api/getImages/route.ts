@@ -9,6 +9,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
 type CloudinaryImage = {
   src: string;
   alt: string;
@@ -18,14 +19,16 @@ export async function GET() {
   try {
     const { resources } = await cloudinary.api.resources({
       type: 'upload',
-      prefix: 'Japan2023', // Replace with your folder name
-      max_results: 300, // Adjust as needed
+      prefix: 'Japan2023/',
+      max_results: 270,
     });
 
-    const images: CloudinaryImage[] = resources.map((resource: any) => ({
-      src: resource.public_id,
-      alt: resource.public_id.split('/').pop(), // Use the file name as alt text
-    }));
+    const images: CloudinaryImage[] = resources
+      .filter((resource: any) => resource.bytes > 0) // Filter out images with 0 bytes (This was borderline problematic)
+      .map((resource: any) => ({
+        src: resource.public_id,
+        alt: resource.public_id.split('/').pop(), // Use the file name as alt text
+      }));
 
     return NextResponse.json(images);
   } catch (error: any) {
