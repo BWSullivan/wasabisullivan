@@ -8,7 +8,7 @@ const navigator = [
 const Gallery = () => {
   return (
     <div>
-            <nav className="my-16">
+        <nav className="my-16">
         <ul className="flex items-center justify-center gap-6">
           {navigator.map((item) => (
             <Link
