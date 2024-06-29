@@ -2,7 +2,8 @@ import React from 'react'
 import Link from "next/link";
 
 const navigator = [
-  { name: "Japan", href: "/gallery/japan" },
+  { name: "Japan 2023", href: "/gallery/japan" },
+  { name: "Eclipse 2024", href: "/gallery/eclipse" },
 ]
 
 const Gallery = () => {
