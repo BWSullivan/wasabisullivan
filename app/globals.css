@@ -29,4 +29,9 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  @media (min-aspect-ratio: 16/9) {
+    .layout--wide {
+      @apply flex-row items-center justify-between;
+    }
+  }
 }
