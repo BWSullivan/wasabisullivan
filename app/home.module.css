@@ -138,7 +138,7 @@
 }
 
 .heroFrame[data-fade] {
-  animation: photoFade var(--theme-transition) both;
+  animation: photoFade 420ms var(--motion-ease) both;
 }
 
 @keyframes photoFade {
@@ -156,34 +156,49 @@
 .heroControls {
   position: absolute;
   z-index: 3;
-  left: 0.9rem;
-  bottom: 0.9rem;
+  inset: 0;
   display: flex;
-  overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 18%);
-  border-radius: var(--radius-pill);
-  background-color: rgb(14 13 12 / 78%);
-  backdrop-filter: blur(12px);
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: clamp(0.55rem, 1.5vw, 1rem);
+  pointer-events: none;
 }
 
 .heroControls button {
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  padding: 0.25rem 0.7rem;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: var(--radius-pill);
+  background-color: rgb(14 13 12 / 78%);
   color: #fff;
-  font-size: 0.875rem;
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
 }
 
-.heroControls button + button {
-  border-left: 1px solid rgb(255 255 255 / 20%);
+.heroControls button span {
+  width: 0.62rem;
+  height: 0.62rem;
+  margin-right: 0.15rem;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(-45deg);
+}
+
+.heroControls button:first-child span {
+  margin-right: 0;
+  margin-left: 0.15rem;
+  transform: rotate(135deg);
 }
 
 .heroControls button:hover {
+  background-color: rgb(14 13 12 / 92%);
   color: var(--site-accent);
 }
 
 .heroControls button:focus-visible {
-  outline-offset: -3px;
+  outline-offset: 2px;
 }
 
 .heroPhoto figcaption {
@@ -248,6 +263,14 @@
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .heroControls button {
+    transition: background-color 160ms ease, color 160ms ease, transform 220ms var(--motion-ease);
+  }
+
+  .heroControls button:hover {
+    transform: scale(1.08);
+  }
+
   .primaryLink:hover,
   .secondaryLink:hover,
   .collectionList a:hover {
@@ -256,7 +279,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero::before {
+  .hero::before,
+  .heroFrame[data-fade] {
     animation: none;
   }
 
@@ -308,15 +332,6 @@
     aspect-ratio: 1.35;
   }
 
-  .heroControls {
-    left: 0.55rem;
-    bottom: 0.55rem;
-  }
-
-  .heroControls button {
-    padding-inline: 0.5rem;
-  }
-
   .heroPhoto figcaption {
     right: 0.55rem;
     bottom: 0.55rem;
@@ -324,12 +339,5 @@
 
   .collections {
     gap: 1.5rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .heroPhoto figcaption {
-    top: 0.55rem;
-    bottom: auto;
   }
 }

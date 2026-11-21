@@ -20,9 +20,16 @@ type Slide = {
 };
 
 type Frame = { slide: Slide; src?: string; srcSet?: string; palette: Palette };
+type Direction = -1 | 1;
+type Preview = {
+  image: HTMLImageElement;
+  controller: AbortController;
+  ready: Promise<Frame>;
+};
 
-const sizes = "(max-width: 720px) calc(100vw - 2rem), (max-width: 1360px) 61vw, 820px";
+const sizes = "(max-width: 720px) calc(100vw - 3rem), (max-width: 1360px) 58vw, 760px";
 const rotationInterval = 8000;
+const previewCacheSize = 4;
 const motionPreference = "(prefers-reduced-motion: reduce)";
 
 const cover: Slide = {
@@ -52,6 +59,8 @@ const localSlides: Slide[] = [
   },
 ];
 
+const coverFrame: Frame = { slide: cover, palette: coverPalette };
+
 function toSlide(photo: FeaturedPhoto): Slide {
   const { title, year } = albums[photo.album];
   return {
@@ -68,7 +77,7 @@ function imageSources(slide: Slide) {
   if ("original" in slide.source) {
     const { original, width, height } = slide.source;
     const maxWidth = Math.min(width, Math.floor(height / 0.82), 1920);
-    const widths = [480, 768, 1024, 1440].filter((size) => size < maxWidth);
+    const widths = [480, 768, 1024, 1440, 1600].filter((size) => size < maxWidth);
     widths.push(maxWidth);
     const preview = (size: number) =>
       cloudinaryTransform(original, `c_fill,w_${size},h_${Math.max(1, Math.round(size * 0.82))},f_auto,q_auto`);
@@ -82,9 +91,8 @@ function imageSources(slide: Slide) {
   return { src: props.src, srcSet: props.srcSet };
 }
 
-function prepareFrame(slide: Slide, signal: AbortSignal): Promise<Frame> {
+function prepareFrame(slide: Slide, image: HTMLImageElement, signal: AbortSignal): Promise<Frame> {
   return new Promise((resolve, reject) => {
-    const image = new window.Image();
     const { src, srcSet } = imageSources(slide);
     const deadline = window.setTimeout(cancel, 9000);
 
@@ -104,13 +112,20 @@ function prepareFrame(slide: Slide, signal: AbortSignal): Promise<Frame> {
       return;
     }
     signal.addEventListener("abort", cancel, { once: true });
-    image.onload = () => {
+    image.onload = async () => {
+      try {
+        await image.decode();
+      } catch {
+        cancel();
+        return;
+      }
+      if (signal.aborted) return;
       cleanUp();
       resolve({
         slide,
         src: image.currentSrc || image.src,
         srcSet,
-        palette: slide === cover ? coverPalette : photoPalette(image),
+        palette: photoPalette(image),
       });
     };
     image.onerror = cancel;
@@ -119,6 +134,11 @@ function prepareFrame(slide: Slide, signal: AbortSignal): Promise<Frame> {
     if (srcSet) image.srcset = srcSet;
     image.src = src;
   });
+}
+
+function slideAt(playlist: Slide[], currentId: string, offset: number) {
+  const index = playlist.findIndex((slide) => slide.id === currentId);
+  return playlist[(index + offset + playlist.length) % playlist.length];
 }
 
 function subscribeToMotion(callback: () => void) {
@@ -133,18 +153,20 @@ const initiallyReduced = () => false;
 export default function HeroPhotos() {
   const [playlist, setPlaylist] = useState(localSlides);
   const [frames, setFrames] = useState<{ current: Frame; previous?: Frame }>({
-    current: { slide: cover, palette: coverPalette },
+    current: coverFrame,
   });
-  const [paused, setPaused] = useState(false);
+  const [coverReady, setCoverReady] = useState(false);
+  const [rotationStopped, setRotationStopped] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
   const reduced = useSyncExternalStore(subscribeToMotion, motionIsReduced, initiallyReduced);
-  const pending = useRef<{ controller: AbortController; automatic: boolean } | null>(null);
+  const previews = useRef(new Map<string, Preview>());
+  const pending = useRef<{ automatic: boolean } | null>(null);
   const { current, previous } = frames;
-  const shouldRotate = !paused && !reduced && !hovered && !focused;
+  const shouldRotate = !rotationStopped && !reduced && !hovered;
 
   useEffect(() => {
     const controller = new AbortController();
+    const cache = previews.current;
     async function loadPlaylist() {
       try {
         const response = await fetch("/api/featured-photos", { signal: controller.signal });
@@ -152,7 +174,7 @@ export default function HeroPhotos() {
         const photos: FeaturedPhoto[] = await response.json();
         if (controller.signal.aborted || !photos.length) return;
         const slides = photos.map(toSlide);
-        setPlaylist(slides.length === 1 ? [...slides, cover] : slides);
+        setPlaylist([cover, ...slides, ...localSlides.slice(1)]);
       } catch {
         // The archived photos keep the rotation available if Cloudinary is offline.
       }
@@ -160,7 +182,9 @@ export default function HeroPhotos() {
     void loadPlaylist();
     return () => {
       controller.abort();
-      pending.current?.controller.abort();
+      pending.current = null;
+      for (const preview of cache.values()) preview.controller.abort();
+      cache.clear();
     };
   }, []);
 
@@ -170,25 +194,54 @@ export default function HeroPhotos() {
     root.style.setProperty("--photo-saturation", `${current.palette.saturation}%`);
   }, [current.palette]);
 
-  const advance = useCallback(async (automatic: boolean) => {
-    if (pending.current) {
-      if (automatic || !pending.current.automatic) return;
-      pending.current.controller.abort();
+  const loadPreview = useCallback((slide: Slide, priority: "low" | "high") => {
+    if (slide === cover) return Promise.resolve(coverFrame);
+
+    const cache = previews.current;
+    const cached = cache.get(slide.id);
+    if (cached) {
+      cache.delete(slide.id);
+      cache.set(slide.id, cached);
+      if (priority === "high") cached.image.fetchPriority = "high";
+      return cached.ready;
     }
 
-    const request = { controller: new AbortController(), automatic };
+    const image = new window.Image();
+    image.fetchPriority = priority;
+    const controller = new AbortController();
+    const preview = { image, controller, ready: prepareFrame(slide, image, controller.signal) };
+    cache.set(slide.id, preview);
+    if (cache.size > previewCacheSize) {
+      const oldest = cache.keys().next().value!;
+      cache.get(oldest)?.controller.abort();
+      cache.delete(oldest);
+    }
+    void preview.ready.catch(() => {
+      if (cache.get(slide.id) === preview) cache.delete(slide.id);
+    });
+    return preview.ready;
+  }, []);
+
+  useEffect(() => {
+    if (!coverReady) return;
+    for (const direction of [-1, 1]) {
+      const slide = slideAt(playlist, current.slide.id, direction);
+      void loadPreview(slide, "low");
+    }
+  }, [coverReady, current.slide.id, loadPreview, playlist]);
+
+  const advance = useCallback(async (direction: Direction, automatic = false) => {
+    if (automatic && pending.current) return;
+
+    const request = { automatic };
     pending.current = request;
-    const { signal } = request.controller;
-    const start = playlist.findIndex((slide) => slide.id === current.slide.id);
 
     try {
-      for (let offset = 1; offset <= playlist.length && !signal.aborted; offset++) {
-        const slide = playlist[(start + offset) % playlist.length];
-        if (slide.id === current.slide.id) break;
-
+      for (let step = 1; step < playlist.length && pending.current === request; step++) {
+        const slide = slideAt(playlist, current.slide.id, direction * step);
         try {
-          const next = await prepareFrame(slide, signal);
-          if (!signal.aborted && (!automatic || !document.hidden)) {
+          const next = await loadPreview(slide, automatic ? "low" : "high");
+          if (pending.current === request && (!automatic || !document.hidden)) {
             setFrames({ previous: current, current: next });
           }
           break;
@@ -199,18 +252,23 @@ export default function HeroPhotos() {
     } finally {
       if (pending.current === request) pending.current = null;
     }
-  }, [current, playlist]);
+  }, [current, loadPreview, playlist]);
 
   useEffect(() => {
     if (!shouldRotate) return;
     const timer = window.setInterval(() => {
-      if (!document.hidden) void advance(true);
+      if (!document.hidden) void advance(1, true);
     }, rotationInterval);
     return () => {
       window.clearInterval(timer);
-      if (pending.current?.automatic) pending.current.controller.abort();
+      if (pending.current?.automatic) pending.current = null;
     };
   }, [advance, shouldRotate]);
+
+  function browse(direction: Direction) {
+    setRotationStopped(true);
+    void advance(direction);
+  }
 
   return (
     <figure
@@ -219,9 +277,13 @@ export default function HeroPhotos() {
         if (event.pointerType === "mouse") setHovered(true);
       }}
       onPointerLeave={() => setHovered(false)}
-      onFocus={() => setFocused(true)}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+      onFocus={() => setRotationStopped(true)}
+      onKeyDown={(event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          browse(event.key === "ArrowLeft" ? -1 : 1);
+        }
       }}
     >
       <Link href={current.slide.href} aria-label={`Explore the ${current.slide.albumTitle} gallery`}>
@@ -238,28 +300,43 @@ export default function HeroPhotos() {
               {frame.src ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
-                  src={frame.src}
-                  srcSet={frame.srcSet}
-                  sizes={sizes}
                   crossOrigin="anonymous"
+                  sizes={sizes}
+                  srcSet={frame.srcSet}
+                  src={frame.src}
                   alt={active ? frame.slide.alt : ""}
                 />
               ) : (
-                <Image src={japanAtNight} alt={active ? cover.alt : ""} fill preload={active} sizes={sizes} />
+                <Image
+                  src={japanAtNight}
+                  alt={active ? cover.alt : ""}
+                  fill
+                  fetchPriority={active ? "high" : undefined}
+                  loading="eager"
+                  sizes={sizes}
+                  onLoad={() => setCoverReady(true)}
+                />
               )}
             </div>
           );
         })}
       </Link>
-      <div className={styles.heroControls} role="group" aria-label="Featured photo controls">
-        {!reduced && (
-          <button type="button" onClick={() => setPaused(!paused)} aria-label={paused ? "Play photo rotation" : "Pause photo rotation"}>
-            {paused ? "Play" : "Pause"}
-          </button>
-        )}
-        <button type="button" onClick={() => void advance(false)} aria-label="Next featured photo">Next</button>
+      <div
+        className={styles.heroControls}
+        role="group"
+        aria-label="Featured photo controls"
+        aria-description="Using either arrow stops automatic rotation."
+      >
+        <button type="button" onClick={() => browse(-1)} aria-label="Previous featured photo">
+          <span aria-hidden="true" />
+        </button>
+        <button type="button" onClick={() => browse(1)} aria-label="Next featured photo">
+          <span aria-hidden="true" />
+        </button>
       </div>
-      <figcaption aria-live={shouldRotate ? "off" : "polite"}>{current.slide.caption}</figcaption>
+      <figcaption aria-live={shouldRotate ? "off" : "polite"}>
+        {current.slide.caption}<span className="sr-only">. {current.slide.alt}</span>
+      </figcaption>
     </figure>
   );
 }

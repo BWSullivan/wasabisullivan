@@ -1,7 +1,5 @@
-import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import Navbar from '../components/navbar'
 
 const skills = [
@@ -21,9 +19,24 @@ const skills = [
 
 const experiences = [
   {
+    role: 'Software Engineer',
+    company: 'Hiller Measurements',
+    location: 'Austin, TX',
+    period: 'Sept 2025 – Present',
+    highlights: [
+      'Developed automated test applications in Python, LabVIEW, C++, and C to streamline testing processes for high-end custom RF Automated Test Equipment (ATE) and server racks.',
+      'Designed and implemented a structured SQL database to store and organize detailed test information and specifications for RF chassis, enhancing data retrieval and traceability.',
+      'Created and maintained an RF simulation application to model RF component behavior prior to physical build, built on REACT, Django, and SQL lite.',
+      'Built a suite of debugging tools, including Time Domain Reflectometry (TDR) analysis and advanced RF plotting, to aid technicians in pinpointing issues with inch-level precision.',
+      'Established version control practices in GitLab across all software projects.',
+      'Assist customers on site with debugging, issues, and deployment of test equipment.',
+      'Created programs and algorithms to accelerate manufacturing processes using data collected by test programs.',
+    ],
+  },
+  {
     role: 'Test Automation Engineer',
     company: 'Hiller Measurements',
-    period: 'Feb 2024 - Present',
+    period: 'Started Feb 2024',
     details: 'Developed automated test applications in Python, LabVIEW, C++, and C to streamline testing processes for high-end custom RF Automated Test Equipment (ATE) and server racks. Maintained an RF simulation application to model RF component behavior prior to physical build, built on REACT, Django, and SQL lite.',
   },
   {
@@ -76,7 +89,7 @@ const About = () => {
               className="rounded-full border-4 border-[color:var(--site-accent)]"
             />
           <p className="text-lg text-gray-200 leading-relaxed">
-            Hi, I&apos;m <span className="font-semibold">Brandon Sullivan</span>, a <span className="font-semibold">Test Automation Engineer</span> based in <span className="font-semibold">Austin, TX</span>. I love building web applications with <span className="font-semibold">Next.js</span>, crafting robust test suites, and sharing knowledge through blog posts. When I&apos;m not coding, I&apos;m exploring new countries, photographing landscapes, or tinkering with home automation projects.
+            Hi, I&apos;m <span className="font-semibold">Brandon Sullivan</span>, a <span className="font-semibold">Software Engineer</span> based in <span className="font-semibold">Austin, TX</span>. I love building web applications with <span className="font-semibold">Next.js</span>, crafting robust test suites, and sharing knowledge through blog posts. When I&apos;m not coding, I&apos;m exploring new countries, photographing landscapes, or tinkering with home automation projects.
           </p>
         </div>
       </section>
@@ -98,12 +111,19 @@ const About = () => {
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Professional Experience</h2>
         <div className="space-y-6">
           {experiences.map((exp) => (
-            
-            <div key={exp.role} className="rounded-[var(--radius-card)] bg-[color:var(--site-raised)] p-6">
+            <article key={exp.role} className="rounded-[var(--radius-card)] bg-[color:var(--site-raised)] p-4 sm:p-6">
               <h3 className="text-2xl font-semibold text-white">{exp.role}</h3>
-              <p className="text-sm text-gray-400 mb-2">{exp.company} &middot; {exp.period}</p>
-              <p className="text-gray-200">{exp.details}</p>
-            </div>
+              <p className="mb-2 text-sm text-[color:var(--site-muted)]">
+                {exp.company}{exp.location && <> &middot; {exp.location}</>} &middot; {exp.period}
+              </p>
+              {exp.highlights ? (
+                <ul className="mt-4 list-disc space-y-2 pl-5 leading-relaxed text-gray-200 marker:text-[color:var(--site-accent)]">
+                  {exp.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                </ul>
+              ) : (
+                <p className="text-gray-200">{exp.details}</p>
+              )}
+            </article>
           ))}
         </div>
       </section>
