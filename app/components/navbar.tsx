@@ -1,20 +1,30 @@
 import Link from "next/link";
+import styles from "./navbar.module.css";
 
-export default function Navbar() {
+const navigation = [
+  { title: "Photography", href: "/gallery" },
+  { title: "Gear", href: "/gear" },
+  { title: "About", href: "/about" },
+] as const;
+
+type Page = "/" | (typeof navigation)[number]["href"];
+
+export default function Navbar({ current }: { current?: Page }) {
   return (
-    <header className="theme-colors mx-auto flex min-h-[4.5rem] w-[calc(100%-2rem)] max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-2 border-b border-[color:var(--site-border)] py-3 sm:w-[calc(100%-3rem)]">
-      <Link href="/" className="py-2 text-base font-semibold">
+    <header className={styles.header}>
+      <Link href="/" className={styles.brand} aria-current={current === "/" ? "page" : undefined}>
         Brandon Sullivan
       </Link>
       <nav aria-label="Main navigation">
-        <ul className="theme-colors flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-[color:var(--site-muted)]">
-          <li><Link href="/gallery" className="inline-block py-2 hover:text-[color:var(--site-accent)]">Photography</Link></li>
-          <li><Link href="/about" className="inline-block py-2 hover:text-[color:var(--site-accent)]">About</Link></li>
-          <li>
-            <a href="mailto:brandon71399@gmail.com" className="inline-block py-2 hover:text-[color:var(--site-accent)]">
-              Contact
-            </a>
-          </li>
+        <ul className={styles.links}>
+          {navigation.map(({ title, href }) => (
+            <li key={href}>
+              <Link href={href} aria-current={current === href ? "page" : undefined}>
+                {title}
+              </Link>
+            </li>
+          ))}
+          <li><a href="mailto:brandon71399@gmail.com">Contact</a></li>
         </ul>
       </nav>
     </header>

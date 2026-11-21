@@ -7,18 +7,19 @@ import { albums } from "./photography";
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <Navbar current="/" />
       <main className={styles.home}>
-        <section className={styles.hero} aria-labelledby="home-title">
+        <section className={`${styles.hero} enter`} aria-labelledby="home-title">
           <div className={styles.intro}>
             <p className={styles.eyebrow}>Software engineering &amp; photography</p>
             <h1 id="home-title">Brandon Sullivan</h1>
             <p className={styles.description}>
               I build software and photograph the places I go.
             </p>
-            <a className={styles.primaryLink} href="#collections">
-              Explore photography
-            </a>
+            <div className={styles.actions}>
+              <a className={styles.primaryLink} href="#collections">Explore photography</a>
+              <Link className={styles.secondaryLink} href="/gear">My camera story</Link>
+            </div>
           </div>
           <HeroPhotos />
         </section>

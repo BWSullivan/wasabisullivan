@@ -11,9 +11,9 @@ export const metadata: Metadata = { title: "Photography — Brandon Sullivan" };
 export default function Gallery() {
   return (
     <>
-      <Navbar />
+      <Navbar current="/gallery" />
       <main className={styles.page}>
-        <header className={styles.heading}>
+        <header className={`${styles.heading} enter`}>
           <h1>Photography</h1>
           <p>Explore the galleries, zoom in on the details, or download an original for personal use.</p>
         </header>

@@ -61,10 +61,10 @@ const experiences = [
 const About = () => {
   return (
     <div className="space-y-16">
-      <Navbar />
+      <Navbar current="/about" />
       {/* Header Section */}
-      <section className="max-w-3xl mx-auto p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg mt-16">
-        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600 text-center mb-8">
+      <section className="enter mx-auto mt-16 w-[calc(100%-2rem)] max-w-3xl rounded-[var(--radius-panel)] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-lg sm:p-8">
+        <h1 className="mb-8 text-center font-[family-name:var(--display-font)] text-5xl tracking-tight">
           About Me
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-8">
@@ -73,7 +73,7 @@ const About = () => {
               alt="Brandon Sullivan"
               width={160}
               height={160}
-              className="rounded-full border-4 border-blue-500"
+              className="rounded-full border-4 border-[color:var(--site-accent)]"
             />
           <p className="text-lg text-gray-200 leading-relaxed">
             Hi, I&apos;m <span className="font-semibold">Brandon Sullivan</span>, a <span className="font-semibold">Test Automation Engineer</span> based in <span className="font-semibold">Austin, TX</span>. I love building web applications with <span className="font-semibold">Next.js</span>, crafting robust test suites, and sharing knowledge through blog posts. When I&apos;m not coding, I&apos;m exploring new countries, photographing landscapes, or tinkering with home automation projects.
@@ -82,11 +82,11 @@ const About = () => {
       </section>
 
       {/* Skills Section */}
-      <section className="max-w-3xl mx-auto p-8 bg-gray-800 rounded-2xl shadow-lg">
+      <section className="mx-auto w-[calc(100%-2rem)] max-w-3xl rounded-[var(--radius-panel)] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-lg sm:p-8">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Skills & Technologies</h2>
         <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-gray-200">
           {skills.map((skill) => (
-            <li key={skill} className="px-4 py-2 bg-gray-700 rounded-lg text-center">
+            <li key={skill} className="break-words rounded-[var(--radius-card)] bg-[color:var(--site-raised)] px-3 py-2 text-center">
               {skill}
             </li>
           ))}
@@ -94,12 +94,12 @@ const About = () => {
       </section>
 
       {/* Experience Section */}
-      <section className="max-w-3xl mx-auto p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg">
+      <section className="mx-auto w-[calc(100%-2rem)] max-w-3xl rounded-[var(--radius-panel)] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-lg sm:p-8">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Professional Experience</h2>
         <div className="space-y-6">
           {experiences.map((exp) => (
             
-            <div key={exp.role} className="bg-gray-800 p-6 rounded-2xl">
+            <div key={exp.role} className="rounded-[var(--radius-card)] bg-[color:var(--site-raised)] p-6">
               <h3 className="text-2xl font-semibold text-white">{exp.role}</h3>
               <p className="text-sm text-gray-400 mb-2">{exp.company} &middot; {exp.period}</p>
               <p className="text-gray-200">{exp.details}</p>
@@ -109,7 +109,7 @@ const About = () => {
       </section>
 
       {/* Fun Facts Section */}
-      <section className="max-w-3xl mx-auto p-8 bg-gray-800 rounded-2xl shadow-lg">
+      <section className="mx-auto w-[calc(100%-2rem)] max-w-3xl rounded-[var(--radius-panel)] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-lg sm:p-8">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Fun Facts</h2>
         <ul className="list-disc list-inside text-gray-200 space-y-2">
           <li>I&apos;ve visited almost 10 different countries!</li>
@@ -124,7 +124,7 @@ const About = () => {
         <p className="text-gray-300 mb-6">
           I&apos;m open to new opportunities and collaborations. Feel free to reach out!
         </p>
-        <Link href="mailto:brandon71399@gmail.com" className="inline-block bg-blue-500 hover:bg-blue-400 text-white font-semibold px-6 py-3 rounded-full transition">
+        <Link href="mailto:brandon71399@gmail.com" className="inline-block rounded-full bg-[color:var(--site-accent)] px-6 py-3 font-semibold text-[color:var(--site-on-accent)] hover:bg-[color:var(--site-accent-hover)]">
           Get in Touch
         </Link>
       </section>

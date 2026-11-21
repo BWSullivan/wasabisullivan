@@ -1,5 +1,4 @@
 .home {
-  --serif: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   width: min(100% - 3rem, 80rem);
   margin: 1.5rem auto 0;
 }
@@ -10,9 +9,31 @@
   display: grid;
   grid-template-columns: minmax(20rem, 1fr) minmax(0, 1.46fr);
   min-height: clamp(31rem, 48vw, 42rem);
+  overflow: hidden;
+  padding: 0.55rem;
   border: 1px solid var(--site-border);
+  border-radius: var(--radius-hero);
   background-color: var(--site-surface);
+  box-shadow: 0 1.25rem 4rem rgb(0 0 0 / 22%), inset 0 1px rgb(255 255 255 / 6%);
   transition: background-color var(--theme-transition), border-color var(--theme-transition);
+}
+
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background-color: color-mix(in srgb, var(--site-accent) 16%, transparent);
+  mask-image: radial-gradient(ellipse at 12% 2%, #000, transparent 52%);
+  content: "";
+  pointer-events: none;
+  animation: lightIn 1.15s var(--motion-ease) both;
+  transition: background-color var(--theme-transition);
+}
+
+@keyframes lightIn {
+  from { opacity: 0; transform: translate(-2.5rem, -1.5rem) scale(0.95); }
+  to { opacity: 1; transform: translate(0) scale(1); }
 }
 
 .intro {
@@ -32,7 +53,7 @@
 .intro h1 {
   max-width: 8ch;
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display-font);
   font-size: clamp(4rem, 7.5vw, 7.6rem);
   font-weight: 400;
   line-height: 0.91;
@@ -48,26 +69,54 @@
   line-height: 1.55;
 }
 
-.primaryLink {
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.primaryLink,
+.secondaryLink {
   display: inline-flex;
   min-height: 3rem;
   align-items: center;
-  padding: 0.6rem 1.15rem;
-  background-color: var(--site-accent);
-  color: var(--site-on-accent);
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
   font-size: 0.92rem;
   font-weight: 650;
-  transition: background-color var(--theme-transition), color var(--theme-transition);
+  transition: background-color var(--theme-transition), color var(--theme-transition), transform 260ms var(--motion-ease);
+}
+
+.primaryLink {
+  background-color: var(--site-accent);
+  color: var(--site-on-accent);
 }
 
 .primaryLink:hover {
   background-color: var(--site-accent-hover);
 }
 
+.secondaryLink {
+  border-color: var(--site-border);
+  background-color: var(--site-surface);
+}
+
+.secondaryLink:hover {
+  background-color: var(--site-raised);
+}
+
+.primaryLink:active,
+.secondaryLink:active {
+  transform: scale(0.97);
+}
+
 .heroPhoto {
   position: relative;
   min-width: 0;
   margin: 0;
+  overflow: hidden;
+  border-radius: calc(var(--radius-hero) - 0.55rem);
   background-color: var(--site-raised);
   transition: background-color var(--theme-transition);
 }
@@ -75,6 +124,7 @@
 .heroPhoto a {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
 }
 
 .heroPhoto a:focus-visible {
@@ -109,13 +159,17 @@
   left: 0.9rem;
   bottom: 0.9rem;
   display: flex;
-  background-color: rgb(14 13 12 / 86%);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: var(--radius-pill);
+  background-color: rgb(14 13 12 / 78%);
+  backdrop-filter: blur(12px);
 }
 
 .heroControls button {
   min-width: 2.75rem;
   min-height: 2.75rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.7rem;
   color: #fff;
   font-size: 0.875rem;
 }
@@ -136,10 +190,13 @@
   position: absolute;
   right: 0.9rem;
   bottom: 0.9rem;
-  padding: 0.45rem 0.7rem;
-  background-color: rgb(14 13 12 / 86%);
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: var(--radius-pill);
+  background-color: rgb(14 13 12 / 78%);
   color: #fff;
   font-size: 0.875rem;
+  backdrop-filter: blur(12px);
   pointer-events: none;
 }
 
@@ -154,7 +211,7 @@
 
 .collections h2 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display-font);
   font-size: clamp(2.5rem, 4.7vw, 4.5rem);
   font-weight: 400;
   line-height: 1;
@@ -169,11 +226,11 @@
 }
 
 .collectionList {
+  display: grid;
+  gap: 0.65rem;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--site-border);
-  transition: border-color var(--theme-transition);
 }
 
 .collectionList a {
@@ -182,10 +239,31 @@
   justify-content: space-between;
   gap: 1rem;
   min-height: 4.75rem;
-  padding: 0.75rem 0.85rem;
-  border-bottom: 1px solid var(--site-border);
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--site-border);
+  border-radius: var(--radius-card);
+  background-color: var(--site-surface);
   font-size: 1.25rem;
-  transition: border-color var(--theme-transition), background-color var(--theme-transition);
+  transition: border-color var(--theme-transition), background-color var(--theme-transition), transform 260ms var(--motion-ease);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .primaryLink:hover,
+  .secondaryLink:hover,
+  .collectionList a:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before {
+    animation: none;
+  }
+
+  .primaryLink:active,
+  .secondaryLink:active {
+    transform: none;
+  }
 }
 
 .collectionList a:hover {
@@ -211,7 +289,7 @@
   }
 
   .intro {
-    padding: 2rem clamp(1rem, 5vw, 2rem) 2.25rem;
+    padding: 1.8rem clamp(0.75rem, 4vw, 1.5rem) 2rem;
   }
 
   .eyebrow {
@@ -230,7 +308,28 @@
     aspect-ratio: 1.35;
   }
 
+  .heroControls {
+    left: 0.55rem;
+    bottom: 0.55rem;
+  }
+
+  .heroControls button {
+    padding-inline: 0.5rem;
+  }
+
+  .heroPhoto figcaption {
+    right: 0.55rem;
+    bottom: 0.55rem;
+  }
+
   .collections {
     gap: 1.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .heroPhoto figcaption {
+    top: 0.55rem;
+    bottom: auto;
   }
 }

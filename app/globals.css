@@ -6,6 +6,12 @@
   --photo-hue: 23deg;
   --photo-saturation: 78%;
   --theme-transition: 900ms ease;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius-pill: 999px;
+  --radius-card: 1.25rem;
+  --radius-panel: 2rem;
+  --radius-hero: clamp(1.75rem, 4vw, 2.75rem);
+  --display-font: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --site-background: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.25) 6%);
   --site-surface: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.32) 9%);
   --site-raised: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.32) 13%);
@@ -32,13 +38,22 @@ body:has(dialog[data-photo-viewer][open]) {
   outline-offset: 4px;
 }
 
-.theme-colors {
-  transition: color var(--theme-transition), border-color var(--theme-transition);
+.enter {
+  animation: enter 650ms var(--motion-ease) both;
+}
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(0.7rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --theme-transition: 0ms;
+  }
+
+  .enter {
+    animation: none;
   }
 }
 

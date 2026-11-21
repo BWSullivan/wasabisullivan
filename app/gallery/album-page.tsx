@@ -9,7 +9,7 @@ export default function AlbumPage({ album }: { album: Album }) {
     <>
       <Navbar />
       <main className={styles.page}>
-        <header className={styles.heading}>
+        <header className={`${styles.heading} enter`}>
           <Link className={styles.back} href="/gallery">All photography</Link>
           <h1>{album.title} <span>{album.year}</span></h1>
           <p>{album.description}</p>
