@@ -1,32 +1,45 @@
-import Image from "next/image";
 import Link from "next/link";
-
+import HeroPhotos from "./components/hero-photos";
 import Navbar from "./components/navbar";
+import styles from "./home.module.css";
+import { albums } from "./photography";
 
-const navigator = [
-  { name: "About", href: "/about" },
-  { name: "Projects", href: "/projects" },
-  { name: "Gallery", href: "/gallery" },
-  { name: "Contact", href: "/contact" },
-  { name: "Hidden", href: "/hidden"},
-]
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <>
       <Navbar />
-      <h1 className="text-4xl text-transparent bg-white cursor-default  font-display sm:text-2xl md:text-4xl whitespace-nowrap bg-clip-text ">
-        Hello, I'm Brandon
-      </h1>
-      <section>
-        
-      </section>
+      <main className={styles.home}>
+        <section className={styles.hero} aria-labelledby="home-title">
+          <div className={styles.intro}>
+            <p className={styles.eyebrow}>Software engineering &amp; photography</p>
+            <h1 id="home-title">Brandon Sullivan</h1>
+            <p className={styles.description}>
+              I build software and photograph the places I go.
+            </p>
+            <a className={styles.primaryLink} href="#collections">
+              Explore photography
+            </a>
+          </div>
+          <HeroPhotos />
+        </section>
 
-      <div className="hidden w-screen " />
-      <div className="my-16 text-center animate-fade-in">
-        <h2 className="text-sm text-zinc-500 ">
-          Software Developer, Engineer, IT, and Photography
-        </h2>
-      </div>
-    </div>
+        <section className={styles.collections} id="collections" aria-labelledby="collections-title">
+          <div>
+            <h2 id="collections-title">Photography</h2>
+            <p>From city streets to the sky.</p>
+          </div>
+          <ul className={styles.collectionList}>
+            {Object.entries(albums).map(([slug, album]) => (
+              <li key={slug}>
+                <Link href={`/gallery/${slug}`}>
+                  <span>{album.title}</span>
+                  <span>{album.year}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </main>
+    </>
   );
 }

@@ -16,9 +16,9 @@
     "framer-motion": "^12.7.4",
     "next": "^16.0.10",
     "next-cloudinary": "^6.16.0",
+    "openseadragon": "^6.1.1",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "yet-another-react-lightbox": "^3.19.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@types/node": "^20",

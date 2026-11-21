@@ -3,26 +3,43 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 0, 0, 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
-  }
+  --photo-hue: 23deg;
+  --photo-saturation: 78%;
+  --theme-transition: 900ms ease;
+  --site-background: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.25) 6%);
+  --site-surface: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.32) 9%);
+  --site-raised: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.32) 13%);
+  --site-border: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.19) 21%);
+  --site-text: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.8) 96%);
+  --site-muted: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.19) 71%);
+  --site-accent: hsl(var(--photo-hue) var(--photo-saturation) 74%);
+  --site-accent-hover: hsl(var(--photo-hue) var(--photo-saturation) 84%);
+  --site-on-accent: hsl(var(--photo-hue) calc(var(--photo-saturation) * 0.6) 10%);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgb(var(--background-end-rgb))
-  )
-  rgb(var(--background-start-rgb));
+  background-color: var(--site-background);
+  color: var(--site-text);
+  transition: background-color var(--theme-transition), color var(--theme-transition);
+}
+
+body:has(dialog[data-photo-viewer][open]) {
+  overflow: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--site-accent);
+  outline-offset: 4px;
+}
+
+.theme-colors {
+  transition: color var(--theme-transition), border-color var(--theme-transition);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-transition: 0ms;
+  }
 }
 
 @layer utilities {
