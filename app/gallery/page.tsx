@@ -60,13 +60,6 @@ export default function Gallery() {
             <li key={slug}>
               <Link href={`/gallery/${slug}`}>
                 <div className={styles.albumCover}>
-                  {slug === "japan" ? (
-                    <Image src={japanCityscape} alt="" sizes={albumSizes} />
-                  ) : (
-                    <Suspense fallback={<EclipsePlaceholder />}>
-                      <EclipseCover />
-                    </Suspense>
-                  )}
                 </div>
                 <div className={styles.albumCaption}>
                   <div>

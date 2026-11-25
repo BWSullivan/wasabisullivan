@@ -2,7 +2,7 @@ export const albums = {
   japan: {
     title: "Japan",
     year: 2023,
-    description: "Street scenes, city views, and quiet corners from my trip to Japan.",
+    description: "Street scenes, city views, and quiet corners from my study abroad trip to Japan.",
     prefix: "Japan2023/",
     endpoint: "/api/getImages",
   },
@@ -12,6 +12,13 @@ export const albums = {
     description: "The 2024 solar eclipse, photographed with my Sony 200–600mm G.",
     prefix: "Eclipse2024/",
     endpoint: "/api/getImagesEclipse",
+  },
+  spacex: {
+    title: "SpaceX Starship",
+    year: 2026,
+    description: "SpaceX Starship launch, photographed with my Sony 200–600mm G.",
+    prefix: "SpaceX2026/",
+    endpoint: "/api/getImagesSpaceX",
   },
 } as const;
 
