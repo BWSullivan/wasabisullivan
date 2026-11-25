@@ -29,16 +29,16 @@ const lenses = [
   },
   {
     name: "Sony 35mm GM",
-    note: "My first proper lens, and one I still use.",
+    note: "My first proper lens, and one I still use every day. Great focal length, sharp as hell, and small in size.",
   },
   {
     name: "Sony 200–600mm G",
-    note: "I picked up this lens to photograph the 2024 solar eclipse.",
+    note: "I picked up this lens to photograph the 2024 solar eclipse, and things like the SpaceX launch.",
     gallery: "/gallery/eclipse",
   },
   {
     name: "Sony 20mm G",
-    note: "I added the 20mm for wide shots.",
+    note: "I added the 20mm for wide shots, and stars.",
   },
 ];
 

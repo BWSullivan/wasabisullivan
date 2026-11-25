@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import japanAtNight from "../../public/photography/japan-at-night.webp";
 import Navbar from "../components/navbar";
 import { albums } from "../photography";
 import styles from "./gallery.module.css";
@@ -15,25 +13,23 @@ export default function Gallery() {
       <main className={styles.page}>
         <header className={`${styles.heading} enter`}>
           <h1>Photography</h1>
-          <p>Explore the galleries, zoom in on the details, or download an original for personal use.</p>
+          <p>Browse the albums, zoom in to see the details, or download an original for personal use.</p>
         </header>
-        <div className={styles.albums}>
-          <Image
-            src={japanAtNight}
-            alt="A rain-soaked street in Japan at night"
-            sizes="(max-width: 720px) 100vw, (max-width: 1150px) 55vw, 620px"
-          />
-          <ul>
-            {Object.entries(albums).map(([slug, album]) => (
-              <li key={slug}>
-                <Link href={`/gallery/${slug}`}>
-                  <span>{album.title}</span>
-                  <span>{album.year}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className={styles.albums} aria-label="Photo albums">
+          {Object.entries(albums).map(([slug, album]) => (
+            <li key={slug}>
+              <Link href={`/gallery/${slug}`}>
+                <div className={styles.albumCaption}>
+                  <div>
+                    <h2>{album.title}</h2>
+                    <span>{album.year}</span>
+                  </div>
+                  <p>{album.description}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </main>
     </>
   );

@@ -2,5 +2,5 @@ import { albums } from "../../photography";
 import { galleryResponse } from "../gallery";
 
 export function GET() {
-  return galleryResponse(albums.eclipse.prefix);
+  return galleryResponse(albums.eclipse);
 }
