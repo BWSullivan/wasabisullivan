@@ -1,8 +1,9 @@
 "use client";
 
 import OpenSeadragon from "openseadragon";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { cloudinaryTransform, photoPreview, type Photo } from "../photography";
+import PhotoSettings from "./photo-settings";
 import styles from "./gallery.module.css";
 
 const tileSize = 512;
@@ -114,6 +115,9 @@ export default function PhotoViewer({
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const detailsButton = useRef<HTMLButtonElement>(null);
+  const detailsId = useId();
+  const [showDetails, setShowDetails] = useState(false);
   const photo = photos[index];
 
   useEffect(() => {
@@ -139,6 +143,11 @@ export default function PhotoViewer({
       aria-label="Photograph viewer"
       onCancel={(event) => {
         event.preventDefault();
+        if (showDetails) {
+          setShowDetails(false);
+          detailsButton.current?.focus();
+          return;
+        }
         close();
       }}
     >
@@ -158,9 +167,30 @@ export default function PhotoViewer({
               <button className={styles.control} type="button" onClick={() => move(1)}>Next</button>
             </div>
           )}
-          <a className={styles.control} href={cloudinaryTransform(photo.original, "fl_attachment,fl_original")}>
-            Download original
-          </a>
+          <div className={styles.viewerActions}>
+            <button
+              ref={detailsButton}
+              className={styles.control}
+              type="button"
+              aria-expanded={showDetails}
+              aria-controls={detailsId}
+              onClick={() => setShowDetails(!showDetails)}
+            >
+              Details
+            </button>
+            <a className={styles.control} href={cloudinaryTransform(photo.original, "fl_attachment,fl_original")}>
+              Download original
+            </a>
+          </div>
+          <section
+            className={styles.detailsPanel}
+            id={detailsId}
+            aria-label="Camera settings"
+            hidden={!showDetails}
+          >
+            <h2>Camera settings</h2>
+            {showDetails && <PhotoSettings key={photo.original} photo={photo} />}
+          </section>
         </footer>
       </div>
     </dialog>

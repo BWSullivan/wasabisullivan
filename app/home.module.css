@@ -1,6 +1,6 @@
 .home {
   width: min(100% - 3rem, 80rem);
-  margin: 1.5rem auto 0;
+  margin: 1.5rem auto;
 }
 
 .hero {
@@ -215,53 +215,6 @@
   pointer-events: none;
 }
 
-.collections {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.46fr);
-  gap: 2rem;
-  align-items: start;
-  margin: clamp(3rem, 7vw, 6rem) 0;
-  scroll-margin-top: 2rem;
-}
-
-.collections h2 {
-  margin: 0;
-  font-family: var(--display-font);
-  font-size: clamp(2.5rem, 4.7vw, 4.5rem);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.05em;
-}
-
-.collections p {
-  margin-top: 0.85rem;
-  color: var(--site-muted);
-  transition: color var(--theme-transition);
-  line-height: 1.6;
-}
-
-.collectionList {
-  display: grid;
-  gap: 0.65rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.collectionList a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: 4.75rem;
-  padding: 0.75rem 1.25rem;
-  border: 1px solid var(--site-border);
-  border-radius: var(--radius-card);
-  background-color: var(--site-surface);
-  font-size: 1.25rem;
-  transition: border-color var(--theme-transition), background-color var(--theme-transition), transform 260ms var(--motion-ease);
-}
-
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .heroControls button {
     transition: background-color 160ms ease, color 160ms ease, transform 220ms var(--motion-ease);
@@ -272,8 +225,7 @@
   }
 
   .primaryLink:hover,
-  .secondaryLink:hover,
-  .collectionList a:hover {
+  .secondaryLink:hover {
     transform: translateY(-2px);
   }
 }
@@ -290,25 +242,13 @@
   }
 }
 
-.collectionList a:hover {
-  background-color: var(--site-raised);
-}
-
-.collectionList a span:last-child {
-  color: var(--site-accent);
-  transition: color var(--theme-transition);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-
 @media (max-width: 720px) {
   .home {
     width: min(100% - 2rem, 80rem);
     margin-top: 0.75rem;
   }
 
-  .hero,
-  .collections {
+  .hero {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -335,9 +275,5 @@
   .heroPhoto figcaption {
     right: 0.55rem;
     bottom: 0.55rem;
-  }
-
-  .collections {
-    gap: 1.5rem;
   }
 }

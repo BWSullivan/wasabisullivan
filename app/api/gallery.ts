@@ -1,7 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { unstable_cache } from "next/cache";
 import { NextResponse } from "next/server";
-import { cloudinaryTransform, type Photo } from "../photography";
+import { albums, cloudinaryTransform, type Photo } from "../photography";
+import { cameraSettings } from "./camera-settings";
 
 type CloudinaryResource = {
   public_id: string;
@@ -9,7 +10,7 @@ type CloudinaryResource = {
   width: number;
   height: number;
   bytes: number;
-  context?: { custom?: { alt?: string } };
+  context?: { custom?: { alt?: string; camera?: string; lens?: string } };
 };
 
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
@@ -39,6 +40,8 @@ const listPhotos = unstable_cache(
 
       for (const resource of page.resources) {
         if (!resource.bytes || !resource.width || !resource.height) continue;
+        const camera = resource.context?.custom?.camera?.trim();
+        const lens = resource.context?.custom?.lens?.trim();
 
         photos.push({
           src: resource.public_id,
@@ -47,6 +50,10 @@ const listPhotos = unstable_cache(
           original: resource.secure_url,
           width: resource.width,
           height: resource.height,
+          cameraOverrides: camera || lens ? {
+            camera: camera || undefined,
+            lens: lens || undefined,
+          } : undefined,
         });
       }
       nextCursor = page.next_cursor;
@@ -54,8 +61,28 @@ const listPhotos = unstable_cache(
 
     return photos;
   },
-  ["cloudinary-gallery-v1"],
+  ["cloudinary-gallery-v2"],
   { revalidate: 60 },
+);
+
+const getCachedCameraSettings = unstable_cache(
+  async (publicId: string, original: string) => {
+    const resource: Parameters<typeof cameraSettings>[0] & { secure_url: string } =
+      await cloudinary.api.resource(publicId, {
+        resource_type: "image",
+        type: "upload",
+        media_metadata: true,
+        max_results: 1,
+        timeout: 8000,
+      });
+
+    if (resource.secure_url !== original) {
+      throw new Error("Cloudinary asset changed since the album was loaded");
+    }
+    return cameraSettings(resource);
+  },
+  ["cloudinary-camera-settings-v1"],
+  { revalidate: 86400 },
 );
 
 export async function getGalleryPhotos(prefix: string) {
@@ -64,6 +91,22 @@ export async function getGalleryPhotos(prefix: string) {
     throw new Error("Cloudinary is not configured");
   }
   return listPhotos(cloud_name, prefix);
+}
+
+export async function getPhotoSettings(publicId: string, original: string) {
+  const album = Object.values(albums).find(({ prefix }) => publicId.startsWith(prefix) && publicId.length > prefix.length);
+  if (!album) return null;
+
+  const photos = await getGalleryPhotos(album.prefix);
+  const photo = photos.find((entry) => entry.src === publicId && entry.original === original);
+  if (!photo) return null;
+
+  const settings = await getCachedCameraSettings(publicId, photo.original);
+  return {
+    ...settings,
+    camera: photo.cameraOverrides?.camera ?? settings.camera,
+    lens: photo.cameraOverrides?.lens ?? settings.lens,
+  };
 }
 
 export async function galleryResponse(prefix: string) {

@@ -9,7 +9,7 @@ export const albums = {
   eclipse: {
     title: "Solar eclipse",
     year: 2024,
-    description: "Photographs of the 2024 solar eclipse.",
+    description: "The 2024 solar eclipse, photographed with my Sony 200–600mm G.",
     prefix: "Eclipse2024/",
     endpoint: "/api/getImagesEclipse",
   },
@@ -25,6 +25,16 @@ export type Photo = {
   original: string;
   width: number;
   height: number;
+  cameraOverrides?: Pick<CameraSettings, "camera" | "lens">;
+};
+
+export type CameraSettings = {
+  camera?: string;
+  lens?: string;
+  focalLength?: string;
+  aperture?: string;
+  shutterSpeed?: string;
+  iso?: string;
 };
 
 export type FeaturedPhoto = Pick<Photo, "src" | "alt" | "original" | "width" | "height"> & {

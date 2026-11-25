@@ -24,6 +24,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 2. Check that the images have public delivery and that their public IDs start with `Japan2023/` or `Eclipse2024/`. In Cloudinary’s Dynamic Folders mode, configure the upload preset to use the asset folder as the public ID prefix. In Fixed Folders mode, the folder is already part of the public ID. [Cloudinary upload presets](https://cloudinary.com/documentation/upload_presets)
 3. Optionally set the `alt` contextual field on each photo to describe it for screen readers.
 
+The photo viewer’s **Details** button displays available camera settings from the uploaded image. Set the optional `camera` or `lens` contextual field in Cloudinary to supply a name that isn’t recorded in the file, such as `Kyoei 35mm`.
+
 The galleries refresh their photo lists on a one-minute cache interval. A new upload to either existing album appears without a code change or redeploy. Visitors see responsive previews, can zoom to the original pixel dimensions, and can download the full-resolution file.
 
 To load galleries locally, set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` in your ignored `.env.local` file. A `CLOUDINARY_URL` connection string also works. Keep these values server-side.
