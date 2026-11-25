@@ -58,28 +58,6 @@
   background-color: var(--site-raised);
 }
 
-.albumCover {
-  aspect-ratio: 1.72;
-  overflow: hidden;
-  background-color: var(--site-raised);
-}
-
-.albumCover img,
-.eclipsePlaceholder {
-  width: 100%;
-  height: 100%;
-}
-
-.albumCover img {
-  object-fit: cover;
-}
-
-.eclipsePlaceholder {
-  background:
-    radial-gradient(circle closest-side at 50% 50%, #100e0d 43%, rgb(211 180 150 / 63%) 44%, transparent 57%),
-    radial-gradient(ellipse at 50% 50%, #30251f, #141211 70%);
-}
-
 .albumCaption {
   padding: clamp(1rem, 2.7vw, 1.75rem);
 }
@@ -324,13 +302,11 @@
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .grid img,
-  .albumCover img {
+  .grid img {
     transition: transform 480ms var(--motion-ease);
   }
 
-  .grid button:hover img,
-  .albums a:hover img {
+  .grid button:hover img {
     transform: scale(1.045);
   }
 

@@ -13,7 +13,7 @@ const fields = [
   ["iso", "ISO"],
 ] as const;
 
-export default function PhotoSettings({ photo }: { photo: Photo }) {
+export default function PhotoSettings({ album, photo }: { album: string; photo: Photo }) {
   const [settings, setSettings] = useState<CameraSettings | "error" | null>(null);
   const [attempt, setAttempt] = useState(0);
 
@@ -21,7 +21,7 @@ export default function PhotoSettings({ photo }: { photo: Photo }) {
     const controller = new AbortController();
     async function loadSettings() {
       try {
-        const params = new URLSearchParams({ photo: photo.src, original: photo.original });
+        const params = new URLSearchParams({ album, photo: photo.src, original: photo.original });
         const response = await fetch(`/api/photo-details?${params}`, { signal: controller.signal });
         if (!response.ok) throw new Error("Camera settings request failed");
         const data: CameraSettings = await response.json();
@@ -32,7 +32,7 @@ export default function PhotoSettings({ photo }: { photo: Photo }) {
     }
     void loadSettings();
     return () => controller.abort();
-  }, [attempt, photo.original, photo.src]);
+  }, [album, attempt, photo.original, photo.src]);
 
   if (!settings) return <p role="status">Loading camera settings…</p>;
   if (settings === "error") {

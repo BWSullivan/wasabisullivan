@@ -7,7 +7,7 @@ const photosPerAlbum = 5;
 export async function GET() {
   const slugs = Object.keys(albums) as AlbumSlug[];
   const results = await Promise.allSettled(slugs.map(async (album) => {
-    const photos = [...await getGalleryPhotos(albums[album].prefix)];
+    const photos = [...await getGalleryPhotos(albums[album])];
     const count = Math.min(photos.length, photosPerAlbum);
     for (let index = 0; index < count; index++) {
       const randomIndex = index + Math.floor(Math.random() * (photos.length - index));

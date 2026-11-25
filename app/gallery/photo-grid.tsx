@@ -12,7 +12,7 @@ type GalleryState =
   | { status: "loading" | "error" }
   | { status: "ready"; photos: Photo[] };
 
-export default function PhotoGrid({ endpoint }: { endpoint: string }) {
+export default function PhotoGrid({ album }: { album: string }) {
   const [gallery, setGallery] = useState<GalleryState>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
   const [visible, setVisible] = useState(pageSize);
@@ -22,7 +22,7 @@ export default function PhotoGrid({ endpoint }: { endpoint: string }) {
     const controller = new AbortController();
     async function load() {
       try {
-        const response = await fetch(endpoint, { signal: controller.signal });
+        const response = await fetch(`/api/albums/${encodeURIComponent(album)}`, { signal: controller.signal });
         if (!response.ok) throw new Error("The gallery could not be loaded");
         const photos: Photo[] = await response.json();
         if (!controller.signal.aborted) setGallery({ status: "ready", photos });
@@ -32,7 +32,7 @@ export default function PhotoGrid({ endpoint }: { endpoint: string }) {
     }
     void load();
     return () => controller.abort();
-  }, [endpoint, attempt]);
+  }, [album, attempt]);
 
   if (gallery.status !== "ready") {
     return (
@@ -92,6 +92,7 @@ export default function PhotoGrid({ endpoint }: { endpoint: string }) {
       )}
       {selected !== null && (
         <PhotoViewer
+          album={album}
           photos={photos}
           index={selected}
           onNavigate={setSelected}

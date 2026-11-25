@@ -104,11 +104,13 @@ function ZoomablePhoto({ photo }: { photo: Photo }) {
 }
 
 export default function PhotoViewer({
+  album,
   photos,
   index,
   onNavigate,
   onClose,
 }: {
+  album: string;
   photos: Photo[];
   index: number;
   onNavigate: (index: number) => void;
@@ -189,7 +191,7 @@ export default function PhotoViewer({
             hidden={!showDetails}
           >
             <h2>Camera settings</h2>
-            {showDetails && <PhotoSettings key={photo.original} photo={photo} />}
+            {showDetails && <PhotoSettings key={photo.original} album={album} photo={photo} />}
           </section>
         </footer>
       </div>
